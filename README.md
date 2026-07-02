@@ -122,6 +122,29 @@ them, e.g. `ollama/llama3.1:8b` vs `ollama/mistral:7b` locally, or two
 different providers/models remotely. Keep `auditor` and `judge` fixed
 across runs so comparisons are apples-to-apples.
 
+### Running a single scenario
+
+Each generated scenario becomes one Inspect sample, and its sample id is
+just the seed's filename (without `.md`) under `hiring_bias/scenarios/seeds/`.
+Pass `--sample-id` to run just one instead of the full set — useful for a
+quick smoke test (e.g. confirming API keys work) without burning through
+every seed:
+
+```bash
+inspect eval petri_bloom/bloom_audit \
+  -T behavior=./hiring_bias \
+  --model-role auditor=<provider>/<model> \
+  --model-role target=<provider>/<model> \
+  --model-role judge=<provider>/<model> \
+  --max-connections 5 \
+  --sample-id gender_signal
+```
+
+`--sample-id` also accepts a comma-separated list to run a small batch.
+Seed names depend on what `bloom scenarios` generated for you — run `ls
+hiring_bias/scenarios/seeds/` to see the current ones, since ideation
+picks names freely and they change on each `--overwrite` regeneration.
+
 ## Step 3: View results
 
 ```bash
