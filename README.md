@@ -84,6 +84,19 @@ already wrote to `hiring_bias/scenarios/`.
 
 ## Step 2: Run the evaluation
 
+Remotely-hosted models (default — see the note in Prerequisites):
+
+```bash
+inspect eval petri_bloom/bloom_audit \
+  -T behavior=./hiring_bias \
+  --model-role auditor=<provider>/<model> \
+  --model-role target=<provider>/<model> \
+  --model-role judge=<provider>/<model> \
+  --max-connections 5
+```
+
+Locally-hosted models (Ollama):
+
 ```bash
 inspect eval petri_bloom/bloom_audit \
   -T behavior=./hiring_bias \
@@ -93,14 +106,21 @@ inspect eval petri_bloom/bloom_audit \
   --max-connections 1
 ```
 
-`--max-connections 1` keeps requests serialized so Ollama never tries to
-serve two roles' models at once — important on 16GB, since concurrent
-requests to different models is what actually blows the memory budget
-(model swapping alone is fine).
+`--max-connections` controls how many requests run concurrently, and the
+right value depends on where the models are hosted:
 
-Swap `target` to try different local models and compare bias profiles
-across them, e.g. `ollama/llama3.1:8b` vs `ollama/mistral:7b`. Keep
-`auditor` and `judge` fixed across runs so comparisons are apples-to-apples.
+- **Remote/API models:** raise it to `5` — cloud providers are built for
+  concurrent requests, so serializing them just slows the eval down for
+  no benefit. Watch your provider's rate limit tier if you push higher.
+- **Local/Ollama models:** keep it at `1` — this serializes requests so
+  Ollama never tries to serve two roles' models at once, which matters on
+  16GB since concurrent requests to different local models (not model
+  swapping itself) is what blows the memory budget.
+
+Swap `target` to try different models and compare bias profiles across
+them, e.g. `ollama/llama3.1:8b` vs `ollama/mistral:7b` locally, or two
+different providers/models remotely. Keep `auditor` and `judge` fixed
+across runs so comparisons are apples-to-apples.
 
 ## Step 3: View results
 

@@ -106,6 +106,7 @@ else
   echo "  inspect eval petri_bloom/bloom_audit -T behavior=./hiring_bias \\"
   echo "    --model-role auditor=<provider>/<model> \\"
   echo "    --model-role target=<provider>/<model> \\"
-  echo "    --model-role judge=<provider>/<model>"
+  echo "    --model-role judge=<provider>/<model> \\"
+  echo "    --max-connections 5"
   echo "  inspect view"
 fi
