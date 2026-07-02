@@ -17,7 +17,7 @@ Everything runs locally through Ollama — no API costs.
 
 ## Prerequisites
 
-- NOTE due to cost contraints, I ran this initially using locally hosted (Ollama) models on a macOS on Apple Silicon (M-series), 16GB unified memory but only managed one sample and stalled due to compute and memory limitations. It is best run with remotely hosted models.
+**NOTE due to cost contraints, I ran this initially using locally hosted (Ollama) models on a macOS on Apple Silicon (M-series), 16GB unified memory but only managed one sample and stalled due to compute and memory limitations. It is best run with remotely hosted models, which is the default mode for the setup script (setup.sh) unless you pass it --local=true.**
 - [Homebrew](https://brew.sh) — `setup.sh` uses it to install Ollama if
   not already present.
 - Python 3.10+ with the `venv` module (ships with standard Python 3
