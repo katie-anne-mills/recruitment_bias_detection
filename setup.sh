@@ -47,7 +47,11 @@ EOF
 echo "== 5. Apply memory-safe settings to the running Ollama server =="
 launchctl setenv OLLAMA_MAX_LOADED_MODELS 1   # never keep two models resident at once
 launchctl setenv OLLAMA_NUM_PARALLEL 1        # serialize requests instead of batching
-launchctl setenv OLLAMA_CONTEXT_LENGTH 8192   # enough for a ~15-turn auditor conversation
+launchctl setenv OLLAMA_CONTEXT_LENGTH 16384  # the auditor's system prompt + tool
+                                               # schemas alone can run several
+                                               # thousand tokens; 8192 was too tight
+                                               # and caused it to exhaust max_turns
+                                               # without ever messaging the target
 # The desktop app also stores its own context_length in
 # ~/Library/Application Support/Ollama/db.sqlite (settings table), which
 # overrides the launchd env var for that one setting - keep both in sync.
@@ -55,7 +59,7 @@ if command -v sqlite3 >/dev/null 2>&1 && [ -f "$HOME/Library/Application Support
   osascript -e 'tell application "Ollama" to quit' >/dev/null 2>&1 || killall Ollama >/dev/null 2>&1 || true
   sleep 1
   sqlite3 "$HOME/Library/Application Support/Ollama/db.sqlite" \
-    "UPDATE settings SET context_length = 8192 WHERE id = 1;" || true
+    "UPDATE settings SET context_length = 16384 WHERE id = 1;" || true
 fi
 killall Ollama >/dev/null 2>&1 || true
 sleep 1
