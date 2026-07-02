@@ -34,11 +34,35 @@ pip install petri-bloom
 echo "== 4. Memory-safe environment variables =="
 cat <<'EOF' >> .venv/bin/activate
 
-# --- Petri Bloom / Ollama memory settings (16GB Mac) ---
-export OLLAMA_MAX_LOADED_MODELS=1   # never keep two models resident at once
-export OLLAMA_NUM_PARALLEL=1        # serialize requests instead of batching
+# --- Petri Bloom / Ollama client settings (16GB Mac) ---
 export OLLAMA_BASE_URL=http://localhost:11434/v1
 EOF
+
+# NOTE: OLLAMA_MAX_LOADED_MODELS / OLLAMA_NUM_PARALLEL / OLLAMA_CONTEXT_LENGTH
+# do nothing if just exported in this shell: the Ollama server that answers
+# requests is the menu-bar Ollama.app (started at login), a separate process
+# that does NOT inherit env vars from a terminal you source this script in.
+# They must be set at the launchd level so the GUI app's server picks them up,
+# and the app must be restarted for the change to take effect.
+echo "== 5. Apply memory-safe settings to the running Ollama server =="
+launchctl setenv OLLAMA_MAX_LOADED_MODELS 1   # never keep two models resident at once
+launchctl setenv OLLAMA_NUM_PARALLEL 1        # serialize requests instead of batching
+launchctl setenv OLLAMA_CONTEXT_LENGTH 8192   # enough for a ~15-turn auditor conversation
+# The desktop app also stores its own context_length in
+# ~/Library/Application Support/Ollama/db.sqlite (settings table), which
+# overrides the launchd env var for that one setting - keep both in sync.
+if command -v sqlite3 >/dev/null 2>&1 && [ -f "$HOME/Library/Application Support/Ollama/db.sqlite" ]; then
+  osascript -e 'tell application "Ollama" to quit' >/dev/null 2>&1 || killall Ollama >/dev/null 2>&1 || true
+  sleep 1
+  sqlite3 "$HOME/Library/Application Support/Ollama/db.sqlite" \
+    "UPDATE settings SET context_length = 8192 WHERE id = 1;" || true
+fi
+killall Ollama >/dev/null 2>&1 || true
+sleep 1
+open -a Ollama
+echo "Restarted Ollama.app with memory-safe launchd env vars applied."
+echo "NOTE: launchctl setenv does not persist across reboot/logout - rerun"
+echo "this script (or the launchctl/open lines above) after restarting your Mac."
 
 echo ""
 echo "Setup complete. Next steps:"
