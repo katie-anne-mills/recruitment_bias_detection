@@ -137,13 +137,21 @@ inspect eval petri_bloom/bloom_audit \
   --model-role target=<provider>/<model> \
   --model-role judge=<provider>/<model> \
   --max-connections 5 \
-  --sample-id gender_signal
+  --sample-id gendered_field_promotion_ranking
 ```
 
+Note: sample ids come from `hiring_bias/scenarios/seeds/`, not from
+`hiring_bias/examples/` — the latter are hand-written transcripts that
+steer scenario generation and are never run directly, so e.g.
+`--sample-id gender_signal` (matching `examples/gender_signal.md`) will
+fail with `PrerequisiteError: No matches in dataset`. If you pass an id
+that doesn't exist, that error message lists all valid ids (alphabetized,
+so don't mistake the first one shown for what actually ran — nothing ran).
+
 `--sample-id` also accepts a comma-separated list to run a small batch.
-Seed names depend on what `bloom scenarios` generated for you — run `ls
-hiring_bias/scenarios/seeds/` to see the current ones, since ideation
-picks names freely and they change on each `--overwrite` regeneration.
+Seed names depend on what `bloom scenarios` generated for you and change
+on each `--overwrite` regeneration — run `ls hiring_bias/scenarios/seeds/`
+to see the current ones before picking an id.
 
 ## Step 3: View results
 
