@@ -86,7 +86,7 @@ EOF
   open -a Ollama
   echo "Restarted Ollama.app with memory-safe launchd env vars applied."
   echo "NOTE: launchctl setenv does not persist across reboot/logout - rerun"
-  echo "this script (or the launchctl/open lines above) after restarting your Mac."
+  echo "this script (or the launchctl/open lines above) after restarting your machine."
 fi
 
 echo ""
