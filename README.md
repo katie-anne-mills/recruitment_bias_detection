@@ -41,7 +41,7 @@ Note, each are scored between 1 and 10.
 
 
 ## Results
-Results showed that even a trusted and supposedly safety tested model, such as OpenAI's GPT5.4-mini, displayed a moderate to occaisionally high level of bias towards disadvantaged job seekers (mean of 5.281 out of 10). This would necessitate strategies to ameliorate this bias if the model were used for recruitment advice.
+Results showed that even a trusted and supposedly safety tested model, such as OpenAI's GPT5.4-mini, displayed a moderate to occaisionally high level of bias towards a broad category of disadvantaged job seekers (mean of 5.281 out of 10). (This is shown in the dashboard view below in the middle 'hiring_bias' column). Such a clear indication of the potential for bias would necessitate strategies to ameliorate this bias if the model were used for recruitment advice.
 
 | Metric | eval_awareness | hiring_bias_manifestation | scenario_realism |
 |---|---|---|---|
